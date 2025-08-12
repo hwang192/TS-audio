@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>자동 재생 안내</title>
+  <style>
+    html,body{height:100%;margin:0}
+    body{display:flex;align-items:center;justify-content:center;font-family:system-ui,Arial}
+    .card{max-width:720px;padding:24px;border:1px solid #eee;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center}
+    button{font-size:18px;padding:14px 20px;border:0;border-radius:12px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>음성을 재생 준비 중...</h1>
+    <p id="status">가능하면 자동으로 재생합니다. 차단되면 아래 버튼을 눌러주세요.</p>
+    <p><button id="playBtn" style="display:none;">▶︎ 재생</button></p>
+    <audio id="player" src="./audio.mp3" playsinline></audio>
+  </div>
+
+  <script>
+    const player = document.getElementById('player');
+    const playBtn = document.getElementById('playBtn');
+    const statusEl = document.getElementById('status');
+
+    async function tryPlay() {
+      try {
+        await player.play();
+        statusEl.textContent = '재생 중입니다.';
+        playBtn.style.display = 'none';
+      } catch (e) {
+        statusEl.textContent = '자동 재생이 차단되었습니다. 버튼을 눌러 재생하세요.';
+        playBtn.style.display = 'inline-block';
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && player.paused) {
+        tryPlay();
+      }
+    });
+
+    window.addEventListener('load', tryPlay);
+
+    playBtn.addEventListener('click', tryPlay);
+  </script>
+</body>
+</html>
